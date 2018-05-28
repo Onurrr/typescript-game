@@ -6,14 +6,18 @@ class Game {
     private textfield:HTMLElement
     private statusbar:HTMLElement
     private player:Player
-    private enemies:Enemy[] = []
+    private enemies:DomObject[] = []
     
     private constructor() {
         this.textfield = document.getElementsByTagName("textfield")[0] as HTMLElement
         this.statusbar = document.getElementsByTagName("bar")[0] as HTMLElement
 
         this.player = new Player()
-        this.enemies.push(new Enemy())
+        this.enemies.push(
+            new Imp(),
+            new Goblin(),
+            new Upgrade()
+        )
         this.gameLoop()    
     }
 

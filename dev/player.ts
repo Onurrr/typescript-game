@@ -2,8 +2,6 @@
 
 class Player extends DomObject {
 
-    private speed:number = 4
-
     constructor() {
         super( "player")
         this.randomPosition()
@@ -13,6 +11,8 @@ class Player extends DomObject {
     }
 
     public update():void {
+        this.element.style.transform = `translate(${this.x}px, ${this.y}px)`
+
         this.x += this.speedX
         this.y += this.speedY
 
@@ -32,14 +32,13 @@ class Player extends DomObject {
             this.x = window.innerWidth
         }
 
-
-        this.draw()
     }
 
     onKeyDown(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 37:
             this.speedX = -this.speed
+            this.element.style.transform = `scaleX(-1)`
             break
         case 39:
             this.speedX = this.speed

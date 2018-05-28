@@ -21,10 +21,10 @@ var DomObject = (function () {
         this.element = document.createElement(type);
         var foreground = document.getElementsByTagName("foreground")[0];
         foreground.appendChild(this.element);
+        this.y = -(this.element.clientHeight);
+        this.x = Math.random() * window.innerWidth;
+        this.speed = 5;
     }
-    DomObject.prototype.draw = function () {
-        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-    };
     DomObject.prototype.randomPosition = function () {
         this.minWidth = 0;
         this.maxWidth = window.innerWidth - this.element.clientWidth;
@@ -35,33 +35,23 @@ var DomObject = (function () {
     DomObject.prototype.getBoundingClientRect = function () {
         return this.element.getBoundingClientRect();
     };
+    DomObject.prototype.reset = function () {
+        this.y = (this.element.clientHeight) - this.element.clientHeight;
+        this.x = Math.random() * (window.innerWidth - this.element.clientWidth);
+    };
     return DomObject;
 }());
-var Enemy = (function (_super) {
-    __extends(Enemy, _super);
-    function Enemy() {
-        var _this = _super.call(this, 'enemy') || this;
-        _this.posy = -(_this.element.clientHeight);
-        _this.posx = Math.random() * window.innerWidth;
-        _this.speed = 5;
-        return _this;
+var Util = (function () {
+    function Util() {
     }
-    Enemy.prototype.update = function () {
-        this.posy += this.speed;
-        this.element.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
-        if (this.posy >= window.innerHeight) {
-            this.reset();
-        }
+    Util.checkCollision = function (a, b) {
+        return (a.left <= b.right &&
+            b.left <= a.right &&
+            a.top <= b.bottom &&
+            b.top <= a.bottom);
     };
-    Enemy.prototype.reset = function () {
-        this.posy = -(this.element.clientHeight);
-        this.posx = Math.random() * (window.innerWidth - this.element.clientWidth);
-    };
-    Enemy.prototype.getBoundingClientRect = function () {
-        return this.element.getBoundingClientRect();
-    };
-    return Enemy;
-}(DomObject));
+    return Util;
+}());
 var Game = (function () {
     function Game() {
         this.score = 0;
@@ -69,7 +59,7 @@ var Game = (function () {
         this.textfield = document.getElementsByTagName("textfield")[0];
         this.statusbar = document.getElementsByTagName("bar")[0];
         this.player = new Player();
-        this.enemies.push(new Enemy());
+        this.enemies.push(new Imp(), new Goblin(), new Upgrade());
         this.gameLoop();
     }
     Game.getInstance = function () {
@@ -109,13 +99,13 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
         var _this = _super.call(this, "player") || this;
-        _this.speed = 4;
         _this.randomPosition();
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
         return _this;
     }
     Player.prototype.update = function () {
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
         this.x += this.speedX;
         this.y += this.speedY;
         if (this.y > (window.innerHeight)) {
@@ -130,12 +120,12 @@ var Player = (function (_super) {
         if (this.x < 0 - this.element.clientWidth) {
             this.x = window.innerWidth;
         }
-        this.draw();
     };
     Player.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
             case 37:
                 this.speedX = -this.speed;
+                this.element.style.transform = "scaleX(-1)";
                 break;
             case 39:
                 this.speedX = this.speed;
@@ -166,15 +156,52 @@ var Player = (function (_super) {
     };
     return Player;
 }(DomObject));
-var Util = (function () {
-    function Util() {
+var Upgrade = (function (_super) {
+    __extends(Upgrade, _super);
+    function Upgrade() {
+        return _super.call(this, 'upgrade') || this;
     }
-    Util.checkCollision = function (a, b) {
-        return (a.left <= b.right &&
-            b.left <= a.right &&
-            a.top <= b.bottom &&
-            b.top <= a.bottom);
+    Upgrade.prototype.update = function () {
+        this.y += this.speed;
+        if (this.y >= window.innerHeight) {
+            this.randomPosition();
+            this.reset();
+            this.getBoundingClientRect();
+        }
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
-    return Util;
-}());
+    return Upgrade;
+}(DomObject));
+var Goblin = (function (_super) {
+    __extends(Goblin, _super);
+    function Goblin() {
+        return _super.call(this, 'goblin') || this;
+    }
+    Goblin.prototype.update = function () {
+        this.y += this.speed;
+        if (this.y >= window.innerHeight) {
+            this.randomPosition();
+            this.reset();
+            this.getBoundingClientRect();
+        }
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    return Goblin;
+}(DomObject));
+var Imp = (function (_super) {
+    __extends(Imp, _super);
+    function Imp() {
+        return _super.call(this, 'imp') || this;
+    }
+    Imp.prototype.update = function () {
+        this.y += this.speed;
+        if (this.y >= window.innerHeight) {
+            this.randomPosition();
+            this.reset();
+            this.getBoundingClientRect();
+        }
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    return Imp;
+}(DomObject));
 //# sourceMappingURL=main.js.map

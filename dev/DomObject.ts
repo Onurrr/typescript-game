@@ -9,18 +9,19 @@ abstract class DomObject {
     public minWidth    : number = 0
     public maxWidth    : number = 0
     public maxHeight   : number = 0
+    public speed       : number
 
     constructor(type : string) {
         this.element = document.createElement(type)
         let foreground = document.getElementsByTagName("foreground")[0]
         foreground.appendChild(this.element);
+
+        this.y = -(this.element.clientHeight)
+        this.x = Math.random() * window.innerWidth 
+        this.speed = 5
     }
 
     abstract update() : void
-
-    public draw() {
-        this.element.style.transform = `translate(${this.x}px, ${this.y}px)`
-    }
 
     public randomPosition() {
         this.minWidth = 0
@@ -33,6 +34,12 @@ abstract class DomObject {
 
     public getBoundingClientRect() {
         return this.element.getBoundingClientRect();
+    }
+
+    public reset() {
+        this.y = (this.element.clientHeight) - this.element.clientHeight
+        this.x = Math.random() * (window.innerWidth - this.element.clientWidth)
+        //this.element.remove()
     }
 
 }
