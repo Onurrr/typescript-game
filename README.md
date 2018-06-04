@@ -1,15 +1,9 @@
-# Typescript startproject
+# Typescript game
 
 
-## The project
+## Pull Request
 
-- The **docs** folder contains the client side:html and css. The js file is created here autonaticly by the compiler.
-- The **dev** folder contains the typescript files
-- **game.ts** is the startingpoint of the application. This contains the windows listener that creates a `new Game()`. 
+https://github.com/rebp/CMTPRG01-8/pull/1
 
-## Compiling
-- Press CMD+SHIFT+B and choose `watch mode`. Your `.ts` will be merged into `main.js`.
-- tsconfig.json contains the settings for compiling.
-
-## Result
-Open index.html in `localhost`
+## Live game
+https://onurrr.github.io/typescript-game/
