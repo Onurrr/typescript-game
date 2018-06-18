@@ -44,11 +44,18 @@ goblin {
     overflow: hidden;
     background-size: 100px 100px;
 }
-upgrade{
+box{
     width:70px; height:70px;
     background-image: url(https://vignette.wikia.nocookie.net/2007scape/images/6/64/Mystery_box_detail.png/revision/latest?cb=20160804230108);
     overflow: hidden;
     background-size: 70px 70px;
+}
+coin{
+    width:70px; height:70px;
+    background-image: url(https://vignette.wikia.nocookie.net/2007scape/images/6/63/Coins_detail.png/revision/latest?cb=20160708025735);
+    overflow: hidden;
+    background-size: 70px 70px;
+
 }
 textfield {
     font-size: 1.4em;

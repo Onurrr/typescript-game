@@ -9,7 +9,7 @@ abstract class DomObject {
     public minWidth    : number = 0
     public maxWidth    : number = 0
     public maxHeight   : number = 0
-    public speed       : number
+    public espeed      : number = 0
 
     constructor(type : string) {
         this.element = document.createElement(type)
@@ -18,7 +18,7 @@ abstract class DomObject {
 
         this.y = -(this.element.clientHeight)
         this.x = Math.random() * window.innerWidth 
-        this.speed = 5
+        this.espeed = Math.random() * 10
     }
 
     abstract update() : void
@@ -39,7 +39,6 @@ abstract class DomObject {
     public reset() {
         this.y = (this.element.clientHeight) - this.element.clientHeight
         this.x = Math.random() * (window.innerWidth - this.element.clientWidth)
-        //this.element.remove()
     }
 
 }

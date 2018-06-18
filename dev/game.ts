@@ -4,19 +4,26 @@ class Game {
     
     private score:number = 0
     private textfield:HTMLElement
-    private statusbar:HTMLElement
     private player:Player
+    private upgrades:DomObject[] = []
     private enemies:DomObject[] = []
     
     private constructor() {
         this.textfield = document.getElementsByTagName("textfield")[0] as HTMLElement
-        this.statusbar = document.getElementsByTagName("bar")[0] as HTMLElement
 
         this.player = new Player()
+
+
+        this.upgrades.push(
+            new Coin(),
+            new Box(),
+        )
+
         this.enemies.push(
             new Imp(),
             new Goblin(),
-            new Upgrade()
+            new Imp(),
+            new Goblin(),
         )
         this.gameLoop()    
     }
@@ -35,11 +42,28 @@ class Game {
             enemy.update()
             if( Util.checkCollision( this.player.getBoundingClientRect(), enemy.getBoundingClientRect()  ) ) {
                 enemy.reset()
+                this.player.setBehavior(new DamagedBehavior(this.player))
+                setTimeout(() => { 
+                    this.player.setBehavior(new NormalBehavior(this.player))
+                }, 1500)
                 this.score --
-                console.log(this.score);
             }
             this.textfield.innerHTML = "Score: " + this.score 
         }
+        for (const upgrade of this.upgrades) {
+            upgrade.update()
+
+            if( Util.checkCollision(upgrade.getBoundingClientRect(), this.player.getBoundingClientRect()) ) {
+                upgrade.reset()
+                this.player.setBehavior(new UpgradeBehavior(this.player))
+                setTimeout(() => { 
+                    this.player.setBehavior(new NormalBehavior(this.player))
+                }, 1500)
+
+                this.score ++
+                this.textfield.innerHTML = "Score: " + this.score 
+            }
+    }
     }
        
     public scorePoint() {
@@ -49,7 +73,7 @@ class Game {
 
     public reset() {
         this.score = 0
-    }
+    }    
 
 } 
 

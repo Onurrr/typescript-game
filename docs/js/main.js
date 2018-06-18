@@ -18,12 +18,13 @@ var DomObject = (function () {
         this.minWidth = 0;
         this.maxWidth = 0;
         this.maxHeight = 0;
+        this.espeed = 0;
         this.element = document.createElement(type);
         var foreground = document.getElementsByTagName("foreground")[0];
         foreground.appendChild(this.element);
         this.y = -(this.element.clientHeight);
         this.x = Math.random() * window.innerWidth;
-        this.speed = 5;
+        this.espeed = Math.random() * 10;
     }
     DomObject.prototype.randomPosition = function () {
         this.minWidth = 0;
@@ -55,11 +56,12 @@ var Util = (function () {
 var Game = (function () {
     function Game() {
         this.score = 0;
+        this.upgrades = [];
         this.enemies = [];
         this.textfield = document.getElementsByTagName("textfield")[0];
-        this.statusbar = document.getElementsByTagName("bar")[0];
         this.player = new Player();
-        this.enemies.push(new Imp(), new Goblin(), new Upgrade());
+        this.upgrades.push(new Coin(), new Box());
+        this.enemies.push(new Imp(), new Goblin(), new Imp(), new Goblin());
         this.gameLoop();
     }
     Game.getInstance = function () {
@@ -77,10 +79,26 @@ var Game = (function () {
             enemy.update();
             if (Util.checkCollision(this.player.getBoundingClientRect(), enemy.getBoundingClientRect())) {
                 enemy.reset();
+                this.player.setBehavior(new DamagedBehavior(this.player));
+                setTimeout(function () {
+                    _this.player.setBehavior(new NormalBehavior(_this.player));
+                }, 1500);
                 this.score--;
-                console.log(this.score);
             }
             this.textfield.innerHTML = "Score: " + this.score;
+        }
+        for (var _b = 0, _c = this.upgrades; _b < _c.length; _b++) {
+            var upgrade = _c[_b];
+            upgrade.update();
+            if (Util.checkCollision(upgrade.getBoundingClientRect(), this.player.getBoundingClientRect())) {
+                upgrade.reset();
+                this.player.setBehavior(new UpgradeBehavior(this.player));
+                setTimeout(function () {
+                    _this.player.setBehavior(new NormalBehavior(_this.player));
+                }, 1500);
+                this.score++;
+                this.textfield.innerHTML = "Score: " + this.score;
+            }
         }
     };
     Game.prototype.scorePoint = function () {
@@ -99,7 +117,9 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
         var _this = _super.call(this, "player") || this;
+        _this.speed = 0;
         _this.randomPosition();
+        _this.behavior = new NormalBehavior(_this);
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
         return _this;
@@ -120,6 +140,7 @@ var Player = (function (_super) {
         if (this.x < 0 - this.element.clientWidth) {
             this.x = window.innerWidth;
         }
+        this.behavior.setBehavior();
     };
     Player.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
@@ -154,23 +175,13 @@ var Player = (function (_super) {
                 break;
         }
     };
-    return Player;
-}(DomObject));
-var Upgrade = (function (_super) {
-    __extends(Upgrade, _super);
-    function Upgrade() {
-        return _super.call(this, 'upgrade') || this;
-    }
-    Upgrade.prototype.update = function () {
-        this.y += this.speed;
-        if (this.y >= window.innerHeight) {
-            this.randomPosition();
-            this.reset();
-            this.getBoundingClientRect();
-        }
-        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    Player.prototype.setSpeed = function (speed) {
+        this.speed = speed;
     };
-    return Upgrade;
+    Player.prototype.setBehavior = function (behavior) {
+        this.behavior = behavior;
+    };
+    return Player;
 }(DomObject));
 var Goblin = (function (_super) {
     __extends(Goblin, _super);
@@ -178,7 +189,7 @@ var Goblin = (function (_super) {
         return _super.call(this, 'goblin') || this;
     }
     Goblin.prototype.update = function () {
-        this.y += this.speed;
+        this.y += this.espeed;
         if (this.y >= window.innerHeight) {
             this.randomPosition();
             this.reset();
@@ -194,7 +205,7 @@ var Imp = (function (_super) {
         return _super.call(this, 'imp') || this;
     }
     Imp.prototype.update = function () {
-        this.y += this.speed;
+        this.y += this.espeed;
         if (this.y >= window.innerHeight) {
             this.randomPosition();
             this.reset();
@@ -203,5 +214,64 @@ var Imp = (function (_super) {
         this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
     return Imp;
+}(DomObject));
+var DamagedBehavior = (function () {
+    function DamagedBehavior(player) {
+        this.player = player;
+    }
+    DamagedBehavior.prototype.setBehavior = function () {
+        this.player.setSpeed(2);
+    };
+    return DamagedBehavior;
+}());
+var NormalBehavior = (function () {
+    function NormalBehavior(player) {
+        this.player = player;
+    }
+    NormalBehavior.prototype.setBehavior = function () {
+        this.player.setSpeed(6);
+    };
+    return NormalBehavior;
+}());
+var UpgradeBehavior = (function () {
+    function UpgradeBehavior(player) {
+        this.player = player;
+    }
+    UpgradeBehavior.prototype.setBehavior = function () {
+        this.player.setSpeed(10);
+    };
+    return UpgradeBehavior;
+}());
+var Box = (function (_super) {
+    __extends(Box, _super);
+    function Box() {
+        return _super.call(this, 'box') || this;
+    }
+    Box.prototype.update = function () {
+        this.y += this.espeed;
+        if (this.y >= window.innerHeight) {
+            this.randomPosition();
+            this.reset();
+            this.getBoundingClientRect();
+        }
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    return Box;
+}(DomObject));
+var Coin = (function (_super) {
+    __extends(Coin, _super);
+    function Coin() {
+        return _super.call(this, 'coin') || this;
+    }
+    Coin.prototype.update = function () {
+        this.y += this.espeed;
+        if (this.y >= window.innerHeight) {
+            this.randomPosition();
+            this.reset();
+            this.getBoundingClientRect();
+        }
+        this.element.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    return Coin;
 }(DomObject));
 //# sourceMappingURL=main.js.map

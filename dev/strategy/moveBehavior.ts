@@ -1,3 +1,0 @@
-interface MoveBehavior {
-    performMove(): void
-}

@@ -1,23 +1,18 @@
-class Upgrade extends DomObject {    
+class Box extends DomObject {    
         
     constructor() {
-        super('upgrade')
-
+        super('box')
     }
 
     public update():void {
 
-        this.y += this.speed
+        this.y += this.espeed
         
         if( this.y >= window.innerHeight  ) {
             this.randomPosition()
             this.reset()
             this.getBoundingClientRect()
         }
-
-        //this.element.remove()
-        //console.log("picked up upgrade")
-
          this.element.style.transform = `translate(${this.x}px, ${this.y}px)`
     }
 }

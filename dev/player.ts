@@ -1,11 +1,15 @@
 /// <reference path="./DomObject.ts" />
 
 class Player extends DomObject {
+    private behavior : PlayerBehavior
+    private speed:number = 0
 
     constructor() {
-        super( "player")
+        super("player")
         this.randomPosition()
-        
+
+        this.behavior = new NormalBehavior(this)
+
         window.addEventListener("keydown", (e:KeyboardEvent) => this.onKeyDown(e))
         window.addEventListener("keyup", (e:KeyboardEvent) => this.onKeyUp(e))
     }
@@ -31,6 +35,7 @@ class Player extends DomObject {
         if (this.x < 0 - this.element.clientWidth ) {
             this.x = window.innerWidth
         }
+        this.behavior.setBehavior()
 
     }
 
@@ -67,5 +72,11 @@ class Player extends DomObject {
             this.speedY = 0
             break
         }
+    }
+    public setSpeed(speed:number) :void {
+        this.speed = speed
+    }
+    public setBehavior(behavior: PlayerBehavior):void {
+        this.behavior = behavior
     }
 }

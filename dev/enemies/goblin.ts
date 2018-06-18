@@ -5,7 +5,7 @@ class Goblin extends DomObject {
     }
 
     public update():void {
-        this.y += this.speed
+        this.y += this.espeed
         if( this.y >= window.innerHeight  ) {
             this.randomPosition()
             this.reset()
